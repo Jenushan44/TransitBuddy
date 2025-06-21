@@ -2,6 +2,14 @@ import logo from './logo.svg';
 import './App.css';
 
 function App() {
+  useEffect(() => {
+    fetch('http://localhost:5000/subway_alerts')
+      .then(res => res.json())
+      .then(data => {
+        console.log("Fetched delay:", data);
+      });
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
@@ -23,3 +31,5 @@ function App() {
 }
 
 export default App;
+
+

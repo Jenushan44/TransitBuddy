@@ -1,23 +1,31 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
 
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+# Flask virtual environment
+backend/venv/
 
-# testing
-/coverage
+# Protobuf-generated files (re-generated from .proto)
+gtfs_realtime_pb2.py
+gtfs_realtime_pb2_grpc.py
 
-# production
-/build
+# React (frontend)
+frontend/node_modules/
+frontend/build/
 
-# misc
-.DS_Store
+# Environment variables
+.env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
+# Log files
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# OS files
+.DS_Store
