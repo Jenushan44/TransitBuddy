@@ -8,8 +8,8 @@ __pycache__/
 backend/venv/
 
 # Protobuf-generated files (re-generated from .proto)
-gtfs_realtime_pb2.py
-gtfs_realtime_pb2_grpc.py
+/backend/gtfs_realtime_pb2.py
+/backend/gtfs_realtime_pb2_grpc.py
 
 # React (frontend)
 frontend/node_modules/
