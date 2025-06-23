@@ -1,5 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
+import Navbar from "./Navbar";
 import React, { useEffect, useState } from 'react';
 
 function App() {
@@ -16,7 +17,10 @@ function App() {
   }, []); // Only runs one time, when the page first loads
 
   return (
+
     <div className="App">
+      <Navbar />
+
 
       {alerts.map((alert, index) => (
         <div className="alert-box" key={index}>
