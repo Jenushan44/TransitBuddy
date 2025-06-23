@@ -1,0 +1,33 @@
+# Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment 
+backend/venv/
+venv/
+
+# Auto-generated files from .proto 
+backend/gtfs_realtime_pb2.py
+backend/gtfs_realtime_pb2_grpc.py
+
+# Node dependencies 
+frontend/node_modules/
+node_modules/ 
+frontend/build/ 
+
+# Environment config files 
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+firebase.js 
+
+# Log files 
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+
