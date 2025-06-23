@@ -2,7 +2,6 @@ import logo from './logo.svg';
 import './App.css';
 import React, { useEffect, useState } from 'react';
 
-
 function App() {
 
   const [alerts, setAlerts] = useState([]) // Holds array of alert data
@@ -18,14 +17,14 @@ function App() {
 
   return (
     <div className="App">
-      {alerts.map(alert => (
-        alert.title,
-        alert.description
+
+      {alerts.map((alert, index) => (
+        <div className="alert-box" key={index}>
+          <p>{alert.description}</p>
+        </div>
       ))}
     </div>
   );
 }
 
 export default App;
-
-
