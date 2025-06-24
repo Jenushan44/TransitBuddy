@@ -30,7 +30,11 @@ def subway_alerts():
             "description": description,
             "cause": str(cause)  
         })
+<<<<<<< HEAD
 
     
 
+=======
+    
+>>>>>>> 04a77da96180b0812ea17e321ae960d89f83e27b
     return jsonify(alerts)

@@ -3,14 +3,21 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+<<<<<<< HEAD
 import { BrowserRouter } from "react-router-dom"
+=======
+>>>>>>> 04a77da96180b0812ea17e321ae960d89f83e27b
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+<<<<<<< HEAD
     <BrowserRouter>
       <App />
     </BrowserRouter>
+=======
+    <App />
+>>>>>>> 04a77da96180b0812ea17e321ae960d89f83e27b
   </React.StrictMode>
 );
 
