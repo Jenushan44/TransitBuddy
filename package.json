@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
   "name": "transitbuddy",
   "version": "0.1.0",
   "private": true,
@@ -35,10 +34,11 @@
       "last 1 chrome version",
       "last 1 firefox version",
       "last 1 safari version"
-    ]
-=======
-  "dependencies": {
-    "firebase": "^11.9.1"
->>>>>>> 04a77da96180b0812ea17e321ae960d89f83e27b
+    ],
+    "dependencies": {
+      "firebase": [
+        "^11.9.1"
+      ]
+    }
   }
 }

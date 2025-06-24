@@ -2,15 +2,10 @@ import logo from './logo.svg';
 import './App.css';
 import Navbar from "./Navbar";
 import React, { useEffect, useState } from 'react';
-<<<<<<< HEAD
 import { Routes, Route } from "react-router-dom";
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import SignUpPage from './pages/SignUpPage';
-
-function App() {
-
-=======
 
 function App() {
 
@@ -25,12 +20,10 @@ function App() {
       });
   }, []); // Only runs one time, when the page first loads
 
->>>>>>> 04a77da96180b0812ea17e321ae960d89f83e27b
   return (
 
     <div className="App">
       <Navbar />
-<<<<<<< HEAD
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -39,18 +32,6 @@ function App() {
 
     </div >
   );
-
-=======
-
-
-      {alerts.map((alert, index) => (
-        <div className="alert-box" key={index}>
-          <p>{alert.description}</p>
-        </div>
-      ))}
-    </div>
-  );
->>>>>>> 04a77da96180b0812ea17e321ae960d89f83e27b
 }
 
 export default App;

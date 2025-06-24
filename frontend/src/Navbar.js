@@ -1,10 +1,7 @@
 import { signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
 import { auth, provider } from "./firebase.js";
 import React, { useEffect, useState } from 'react';
-<<<<<<< HEAD
 import { Link } from "react-router-dom";
-=======
->>>>>>> 04a77da96180b0812ea17e321ae960d89f83e27b
 
 function NavBar() {
 
@@ -33,7 +30,6 @@ function NavBar() {
       }
     });
     return () => stopAuthListener();
-<<<<<<< HEAD
   }, [])
 
   return (
@@ -45,13 +41,11 @@ function NavBar() {
 }
 
 /* {user ? (
-=======
   })
 
   return (
     <div className="navbar">
       {user ? (
->>>>>>> 04a77da96180b0812ea17e321ae960d89f83e27b
         <>
           <p>Welcome {user.displayName || user.email}</p>
           <button onClick={handleLogout}>Logout</button>
@@ -62,15 +56,6 @@ function NavBar() {
           <button className="navbar-button">Sign Up</button>
         </>
       )}
-<<<<<<< HEAD
 */
 
 export default NavBar
-=======
-    </div>
-
-  );
-}
-
-export default NavBar
->>>>>>> 04a77da96180b0812ea17e321ae960d89f83e27b
