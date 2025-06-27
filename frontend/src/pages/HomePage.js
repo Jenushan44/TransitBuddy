@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
 
 function HomePage() {
   const [alerts, setAlerts] = useState([]) // Holds array of alert data
+  const options = ["504 King", "Line 1", "Line 2", "985 Sheppard East"]
+  const [selected, setSelected] = useState([])
+  const [user, setUser] = useState(null);
+  const database = getFirestore();
 
   useEffect(() => {
     fetch("http://localhost:5000/subway_alerts") // Get data from Flask 
@@ -12,6 +19,50 @@ function HomePage() {
       });
   }, []); // Only runs one time, when the page first loads
 
+  function handleCheckBoxChange(item) {
+    let newSelected = [...selected] // Create new copy of array
+
+    if (newSelected.includes(item)) {
+      // Keep only items in array not equal to item
+      // If item in array, remove it because user is unchecking
+      newSelected = newSelected.filter(i => i !== item)
+    } else {
+      newSelected.push(item);
+    }
+    setSelected(newSelected);
+  }
+
+  async function handleSavedRoutes() {
+    if (!user) {
+      alert("Please log in to save routes");
+      return;
+    }
+
+    try {
+
+      const userDataRef = doc(database, "users", user.uid) // Points to the users document in the users collection
+      await setDoc(userDataRef, {
+        selectedRoutes: selected
+      });
+      alert("Routes saved");
+
+    } catch (error) {
+      alert("Error saving routes. Please try again")
+    }
+  }
+
+
+  useEffect(() => {
+    const stopAuthListener = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+    return () => stopAuthListener();
+  }, [])
+
   return (
     <div>
       {alerts.map((alert, index) => (
@@ -20,6 +71,28 @@ function HomePage() {
 
         </div>
       ))}
+
+      <div>
+        <h1>Choose your routes to personalize alerts</h1>
+        {options.map((item) => {
+          return (
+            <label key={item} style={{ display: "block", margin: "5px" }}>
+              <input
+                type='checkbox'
+                checked={selected.includes(item)}
+                onChange={() => handleCheckBoxChange(item)}
+              >
+              </input>
+              {item}
+            </label>
+          );
+        })}
+      </div>
+
+      <button onClick={handleSavedRoutes}>Save Routes</button>
+
+
+
     </div>
   )
 }
