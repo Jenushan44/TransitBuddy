@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { getDoc, getDocs, collection } from "firebase/firestore";
+
 
 function HomePage() {
   const [alerts, setAlerts] = useState([]) // Holds array of alert data
@@ -51,6 +53,31 @@ function HomePage() {
     }
   }
 
+  async function displaySavedRoutes() {
+    if (!user) {
+      alert("Please log in to view saved routes");
+      return;
+    }
+
+    try {
+      const userDocRef = doc(database, "users", user.uid)
+      const userInfo = await getDoc(userDocRef)
+
+
+      if (userInfo.exists()) {
+        const data = userInfo.data();
+        setSelected(data.selectedRoutes || []);
+      } else {
+        alert("No saved routes found.");
+      }
+
+
+
+    } catch (error) {
+      alert("Error viewing routes, Please try again")
+    }
+  }
+
 
   useEffect(() => {
     const stopAuthListener = onAuthStateChanged(auth, (user) => {
@@ -91,6 +118,13 @@ function HomePage() {
 
       <button onClick={handleSavedRoutes}>Save Routes</button>
 
+      <div>
+        <h1>Your Saved Routes</h1>
+        <button onClick={displaySavedRoutes} disabled={!user}>View your routes</button>
+        <p>Selected: {selected.join(", ")}</p>
+
+
+      </div>
 
 
     </div>

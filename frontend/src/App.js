@@ -6,10 +6,6 @@ import { Routes, Route } from "react-router-dom";
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import SignUpPage from './pages/SignUpPage';
-import { signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
-import { auth } from "./firebase";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
-
 
 function App() {
 
@@ -24,9 +20,7 @@ function App() {
       });
   }, []); // Only runs one time, when the page first loads
 
-
   return (
-
     <div className="App">
       <Navbar />
       <Routes>
@@ -34,7 +28,6 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
       </Routes>
-
     </div >
   );
 }
