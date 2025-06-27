@@ -1,16 +1,19 @@
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useEffect, useState } from 'react';
 import { auth, provider } from "../firebase.js";
+import { useNavigate } from 'react-router-dom';
 
 function SignUpPage() {
 
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
+  const navigate = useNavigate()
 
   function handleSignUp() {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         console.log("User successfully signed up", userCredential.user)
+        navigate("/")
       })
       .catch((error) => {
         console.log("Error: User sign up failed", error.message)

@@ -10,6 +10,8 @@ import SignUpPage from './pages/SignUpPage';
 function App() {
 
   const [alerts, setAlerts] = useState([]) // Holds array of alert data
+  const options = ["504 King", "Line 1", "Line 2", "985 Sheppard East"]
+  const [selected, setSelected] = useState([])
 
   useEffect(() => {
     fetch("http://localhost:5000/subway_alerts") // Get data from Flask 
@@ -20,6 +22,19 @@ function App() {
       });
   }, []); // Only runs one time, when the page first loads
 
+  function handleCheckBoxChange(item) {
+    let newSelected = [...selected] // Create new copy of array
+
+    if (newSelected.includes(item)) {
+      // Keep only items in array not equal to item
+      // If item in array, remove it because user is unchecking
+      newSelected = newSelected.filter(i => i !== item)
+    } else {
+      newSelected.push(item);
+    }
+    setSelected(newSelected);
+  }
+
   return (
 
     <div className="App">
@@ -29,6 +44,22 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
       </Routes>
+      <div>
+        <h1>Choose your routes to personalize alerts</h1>
+        {options.map((item) => {
+          return (
+            <label key={item} style={{ display: "block", margin: "5px" }}>
+              <input
+                type='checkbox'
+                checked={selected.includes(item)}
+                onChange={() => handleCheckBoxChange(item)}
+              >
+              </input>
+              {item}
+            </label>
+          );
+        })}
+      </div>
 
     </div >
   );

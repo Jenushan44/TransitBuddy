@@ -7,15 +7,6 @@ function NavBar() {
 
   const [user, setUser] = useState(null);
 
-  function handleGoogleLogin() {
-    signInWithPopup(auth, provider)
-      .then(result => {
-        console.log("User logged in: ", result.user);
-      })
-      .catch((error) => {
-        console.error("Login error: ", error);
-      });
-  }
 
   function handleLogout() {
     signOut(auth);
@@ -30,18 +21,8 @@ function NavBar() {
       }
     });
     return () => stopAuthListener();
-  }, [])
+  }, []);
 
-  return (
-    <div className="navbar">
-      <Link to="/login"><button className="navbar-button">Login</button></Link>
-      <Link to="/signup"><button className="navbar-button">Sign Up</button></Link>
-    </div>
-  );
-}
-
-/* {user ? (
-  })
 
   return (
     <div className="navbar">
@@ -52,10 +33,12 @@ function NavBar() {
         </>
       ) : (
         <>
-          <button className="navbar-button" onClick={handleGoogleLogin}>Login</button>
-          <button className="navbar-button">Sign Up</button>
+          <Link to="/login"><button className="navbar-button">Login</button></Link>
+          <Link to="/signup"><button className="navbar-button">Sign Up</button></Link>
         </>
       )}
-*/
+    </div>
+  );
+}
 
 export default NavBar
