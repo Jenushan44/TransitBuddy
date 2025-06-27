@@ -11,6 +11,7 @@ function HomePage() {
   const [selected, setSelected] = useState([])
   const [user, setUser] = useState(null);
   const database = getFirestore();
+  const [allRoutes, setAllRoutes] = useState([]);
 
   useEffect(() => {
     fetch("http://localhost:5000/subway_alerts") // Get data from Flask 
@@ -83,12 +84,25 @@ function HomePage() {
     const stopAuthListener = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUser(user);
+
+        displaySavedRoutes();
+
       } else {
         setUser(null);
       }
     });
     return () => stopAuthListener();
   }, [])
+
+  useEffect(() => {
+    fetch("http://localhost:5000/all_routes")
+      .then(res => res.json())
+      .then(data => {
+        console.log("Fetched delay:", data);
+        setAllRoutes(data)
+      });
+  }, []);
+
 
   return (
     <div>
@@ -101,7 +115,7 @@ function HomePage() {
 
       <div>
         <h1>Choose your routes to personalize alerts</h1>
-        {options.map((item) => {
+        {allRoutes.map((item) => {
           return (
             <label key={item} style={{ display: "block", margin: "5px" }}>
               <input

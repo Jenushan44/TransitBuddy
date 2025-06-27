@@ -1,5 +1,6 @@
 import requests # Allow backend to make HTTP requests and get page content
 from gtfs_realtime_pb2 import FeedMessage
+import csv
 from flask import Flask, jsonify
 
 
@@ -30,4 +31,24 @@ def subway_alerts():
             "description": description,
             "cause": str(cause)  
         })
+
     return jsonify(alerts)
+
+@app.route("/all_routes")
+def get_all_routes(): 
+    routes = []
+
+    with open("routes.txt", "r") as file: 
+        lines = csv.reader(file)
+
+        for row in lines: 
+            route_id = row[0] 
+            route_p1 = row[2]
+            route_p2 = row[3]
+
+            route_name = f"{route_p1} {route_p2}"
+            
+            routes.append(route_name) 
+
+
+    return jsonify(routes)
