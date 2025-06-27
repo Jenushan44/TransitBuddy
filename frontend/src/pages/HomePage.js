@@ -12,6 +12,9 @@ function HomePage() {
   const [user, setUser] = useState(null);
   const database = getFirestore();
   const [allRoutes, setAllRoutes] = useState([]);
+  const [userSearch, setUserSearch] = useState("");
+  const routesPerPage = 5;
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     fetch("http://localhost:5000/subway_alerts") // Get data from Flask 
@@ -103,6 +106,11 @@ function HomePage() {
       });
   }, []);
 
+  const start = (currentPage - 1) * routesPerPage;
+  const end = start + routesPerPage;
+
+  const filteredRoutes = allRoutes.filter(route => route.toLowerCase().includes(userSearch.toLowerCase()));
+
 
   return (
     <div>
@@ -115,19 +123,36 @@ function HomePage() {
 
       <div>
         <h1>Choose your routes to personalize alerts</h1>
-        {allRoutes.map((item) => {
-          return (
-            <label key={item} style={{ display: "block", margin: "5px" }}>
-              <input
-                type='checkbox'
-                checked={selected.includes(item)}
-                onChange={() => handleCheckBoxChange(item)}
-              >
-              </input>
-              {item}
-            </label>
-          );
-        })}
+        <input
+          type='text'
+          placeholder="Search routes"
+          value={userSearch}
+          onChange={(event) => {
+            setUserSearch(event.target.value);
+            setCurrentPage(1);
+          }}
+
+        >
+
+        </input>
+
+        <div className="route-scroll-bar">
+          {filteredRoutes.map((item) => {
+            return (
+              <label key={item} style={{ display: "block", margin: "5px" }}>
+                <input
+                  type='checkbox'
+                  checked={selected.includes(item)}
+                  onChange={() => handleCheckBoxChange(item)}
+                >
+                </input>
+                {item}
+              </label>
+            );
+          })}
+
+        </div>
+
       </div>
 
       <button onClick={handleSavedRoutes}>Save Routes</button>

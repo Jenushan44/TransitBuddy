@@ -81,3 +81,13 @@
   cursor: pointer;
   transition: background-color 0.3s;
 }
+
+.route-scroll-bar {
+  max-height: 250px;
+  overflow-y: auto;
+  display: block;
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  scroll-behavior: smooth;
+}
