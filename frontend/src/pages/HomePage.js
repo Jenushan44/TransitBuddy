@@ -48,7 +48,8 @@ function HomePage() {
 
       const userDataRef = doc(database, "users", user.uid) // Points to the users document in the users collection
       await setDoc(userDataRef, {
-        selectedRoutes: selected
+        selectedRoutes: selected,
+        email: user.email
       });
       alert("Routes saved");
 

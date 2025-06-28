@@ -33,3 +33,5 @@ yarn-error.log*
 
 
 routes.txt
+.env
+firebase_key.json
