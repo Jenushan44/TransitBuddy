@@ -6,6 +6,8 @@ import { Routes, Route } from "react-router-dom";
 import LoginPage from './pages/LoginPage';
 import HomePage from './pages/HomePage';
 import SignUpPage from './pages/SignUpPage';
+import MapView from "./MapView";
+
 
 function App() {
 
@@ -28,6 +30,8 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
       </Routes>
+
+      <MapView />
     </div >
   );
 }

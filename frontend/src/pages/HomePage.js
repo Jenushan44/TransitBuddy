@@ -17,14 +17,22 @@ function HomePage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [telegramId, setTelegramId] = useState("");
 
-  useEffect(() => {
+  function fetchAlerts() {
     fetch("http://localhost:5000/subway_alerts") // Get data from Flask 
       .then(res => res.json()) // Turn the response into JSON
       .then(data => {
         console.log("Fetched delay:", data);
         setAlerts(data) // Save it into a state so React can use it
       });
-  }, []); // Only runs one time, when the page first loads
+    // Only runs one time, when the page first loads
+  }
+
+  useEffect(() => {
+    fetchAlerts();
+    //Refresh alerts every 60 seconds 
+    const fetchInterval = setInterval(fetchAlerts, 60000);
+    return () => clearInterval(fetchInterval)
+  }, []);
 
   function handleCheckBoxChange(item) {
     let newSelected = [...selected] // Create new copy of array
