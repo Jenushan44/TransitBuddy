@@ -4,8 +4,8 @@ import csv
 from flask import Flask, jsonify
 from dotenv import load_dotenv
 import os
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail
+import smtplib
+from email.message import EmailMessage
 import firebase_admin
 from firebase_admin import credentials, firestore
 
@@ -22,7 +22,7 @@ EMAIL_PASS=os.getenv("EMAIL_PASS")
 
 
 @app.route('/')
-def hello():
+def status():
     return 'TransitBuddy Backend is working!'
 
 @app.route("/subway_alerts")
@@ -65,22 +65,19 @@ def get_all_routes():
     return jsonify(routes)
 
 def send_email(recipient, subject, body): 
-    api_key = os.getenv("SENDGRID_API_KEY")
-    message = Mail(
-        from_email=EMAIL_USER,
-        to_emails=recipient,
-        subject=subject,
-        plain_text_content=body 
-    )
+    message = EmailMessage() 
+    message.set_content(body)
+    message['Subject'] = subject
+    message['From'] = EMAIL_USER
+    message['To'] = recipient
     try: 
-        sendgrid = SendGridAPIClient(api_key)
-        response = sendgrid.send(message)
-        print(response.status_code)
-        print(response.body)
-        print(response.headers)        
-        return True 
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login(EMAIL_USER, EMAIL_PASS)
+            smtp.send_message(message)
+        print(f"Email sent to {recipient}")
+        return True
     except Exception as error: 
-        
+        print("Error sending email:", error)
         return False
 
 # Connects app to firestore to access user's saved routes and read email address 
@@ -101,6 +98,8 @@ def send_alerts():
         data = user.to_dict()
         email = data.get("email")
         saved_routes = data.get("selectedRoutes", [])
+        telegram_id = data.get("telegramId")
+        
 
         for entity in feed.entity: 
             alert = entity.alert
@@ -109,9 +108,25 @@ def send_alerts():
 
             for route in saved_routes: 
                 if route.lower() in title.lower():
+                    if telegram_id:
+                        send_telegram_message(telegram_id, f"TransitBuddy Alert: {route}\n{title}\n{description}")
+                    if email: 
+                        send_email(email, f"TransitBuddy Alert: {route}", f"{title}\n{description}")
 
-                    send_email(email, f"TransitBuddy Alert: {route}", f"{title}\n{description}")
-                    print(f"Sent alert to {email} for {route}")
+
+                        print(f"Sent alert to {email} for {route}")
                     break 
 
     return "All alerts sent"
+
+
+def send_telegram_message(chat_id, message):
+    bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
+
+    url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+    message_data = {
+        "chat_id": chat_id,
+        "text": message
+    }
+    requests.post(url, data=message_data)
+

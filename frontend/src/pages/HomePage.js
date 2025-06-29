@@ -15,6 +15,7 @@ function HomePage() {
   const [userSearch, setUserSearch] = useState("");
   const routesPerPage = 5;
   const [currentPage, setCurrentPage] = useState(1);
+  const [telegramId, setTelegramId] = useState("");
 
   useEffect(() => {
     fetch("http://localhost:5000/subway_alerts") // Get data from Flask 
@@ -49,9 +50,18 @@ function HomePage() {
       const userDataRef = doc(database, "users", user.uid) // Points to the users document in the users collection
       await setDoc(userDataRef, {
         selectedRoutes: selected,
-        email: user.email
+        email: user.email,
+        telegramId: telegramId
       });
       alert("Routes saved");
+      fetch("http://localhost:5000/send_alerts")
+        .then(res => res.text())
+        .then(data => {
+          console.log("Alert trigger response:", data);
+        })
+        .catch(error => {
+          console.error("Error sending alerts:", error);
+        });
 
     } catch (error) {
       alert("Error saving routes. Please try again")
@@ -72,6 +82,7 @@ function HomePage() {
       if (userInfo.exists()) {
         const data = userInfo.data();
         setSelected(data.selectedRoutes || []);
+        setTelegramId(data.telegramId || "");
       } else {
         alert("No saved routes found.");
       }
@@ -166,7 +177,20 @@ function HomePage() {
 
       </div>
 
+      <div>
+        <h2>Add Telegram Id Number</h2>
+        <div>
+          <p>Enter Telegram Id: </p>
+          <input
+            type="text"
+            value={telegramId}
+            onChange={e => { setTelegramId(e.target.value) }}
+          >
+          </input>
 
+
+        </div>
+      </div>
     </div>
   )
 }
