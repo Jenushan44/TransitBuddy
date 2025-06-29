@@ -94,9 +94,6 @@ function HomePage() {
       } else {
         alert("No saved routes found.");
       }
-
-
-
     } catch (error) {
       alert("Error viewing routes, Please try again")
     }
@@ -108,7 +105,7 @@ function HomePage() {
       if (user) {
         setUser(user);
 
-        displaySavedRoutes();
+        displaySavedRoutes(user);
 
       } else {
         setUser(null);

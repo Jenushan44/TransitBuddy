@@ -8,18 +8,16 @@ function MapView() {
 
   const [allRoutes, setAllRoutes] = useState([])
 
-  const subwayStations = [
-    { name: "Union Station", position: [43.6453, -79.3806] },
-    { name: "Bloor-Yonge", position: [43.6717, -79.3857] },
-    { name: "Finch Station", position: [43.7803, -79.4149] },
-    { name: "Kipling Station", position: [43.6366, -79.5357] }
-  ];
-
   const stationCoordinates =
   {
     "Union": [43.6453, -79.3806],
-    "Finch": [43.6717, -793857],
-    "Kipling Station": [43.6366, -79.5357]
+    "Finch": [43.6717, -79.4149],
+    "Kipling Station": [43.6366, -79.5357],
+    "504": [43.652, -79.379],      // King streetcar
+    "85": [43.775, -79.345],       // Sheppard East bus
+    "501": [43.6503, -79.3967],  // Queen streetcar
+    "9 Bellamy": [43.7434, -79.2314] // 9 Bellamy
+
   }
 
 
@@ -37,7 +35,7 @@ function MapView() {
   for (let i = 0; i < allRoutes.length; i++) {
     let alert = allRoutes[i];
     for (let stationName in stationCoordinates) {
-      if (alert.title.includes(stationName)) {
+      if (alert.title.toLowerCase().includes(stationName.toLowerCase())) {
         let coordinates = stationCoordinates[stationName];
         alertMarkers.push({
           position: coordinates,
