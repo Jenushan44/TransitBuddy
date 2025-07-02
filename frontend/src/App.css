@@ -40,34 +40,81 @@
   }
 }
 
-
 /*Navigation Bar*/
 
 .navbar {
   background-color: #1e1e1e;
-  padding: 10px 20px;
+  padding: 10px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: white;
+  font-family: 'Inter', sans-serif;
   flex-wrap: wrap;
-  gap: 10px;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo {
+  font-weight: 900;
+  font-size: 20px;
+  color: white;
+}
+
+.logo .highlight {
+  color: #d71920;
+}
+
+.nav-link {
+  color: #fff;
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  color: #d71920;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .navbar-button {
   background-color: #d71920;
   color: white;
-  padding: 8px 16px;
+  padding: 6px 14px;
   border: none;
   border-radius: 4px;
   font-weight: bold;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.2s ease;
 }
 
 .navbar-button:hover {
   background-color: #a7151a;
 }
+
+.welcome {
+  color: #ccc;
+  font-size: 14px;
+}
+
+.logout-button {
+  background-color: white;
+  color: #1e1e1e;
+  font-weight: bold;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
 
 /*HomePage*/
 .homepage-container {
@@ -79,25 +126,31 @@
 /* HomePage Banner */
 .banner-section {
   text-align: center;
-  margin-bottom: 40px;
+  margin: 0.5rem auto 2.5rem;
+  padding: 2rem 1rem;
+  max-width: 800px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.05);
 }
+
 
 .homepage-title {
-  font-size: 52px;
+  font-size: 2rem;
   font-weight: 800;
   color: #d71920;
-  letter-spacing: -0.5px;
-  margin-bottom: 8px;
-  font-family: 'Inter', sans-serif;
+  margin-bottom: 0.5rem;
 }
 
+
 .homepage-subtitle {
-  font-size: 18px;
-  font-weight: 500;
-  color: #333;
-  opacity: 0.85;
+  font-size: 1.05rem;
+  color: #555;
+  margin-top: 0;
   font-style: italic;
 }
+
+
 
 .main-grid {
   display: flex;
@@ -221,12 +274,4 @@
   overflow: hidden;
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
   border: 1px solid #ddd;
-}
-
-
-
-.alerts-scroll {
-  max-height: 520px;
-  overflow-y: auto;
-  scroll-behavior: smooth;
 }

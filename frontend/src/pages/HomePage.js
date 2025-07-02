@@ -71,7 +71,7 @@ function HomePage({ selected, setSelected }) {
         alertElement.classList.add('flash-highlight'); // Highlight selected alert
         setTimeout(() => {
           alertElement.classList.remove('flash-highlight');
-        }, 3000); // Remore highlight effect after 3 seconds
+        }, 3000); // Remore highlight effect after 3 seconds 
       }
     }
   };
@@ -79,8 +79,8 @@ function HomePage({ selected, setSelected }) {
   return (
     <div className="homepage-container">
       <div className="banner-section">
-        <div className="homepage-title">TransitBuddy</div>
-        <div className="homepage-subtitle">Toronto’s real-time TTC delay tracker and personalized route monitor</div>
+        <div className="homepage-title">Welcome to TransitBuddy</div>
+        <div className="homepage-subtitle">Save your routes to receive real-time TTC delay alerts via email or Telegram.</div>
       </div>
 
       <div className="main-grid">

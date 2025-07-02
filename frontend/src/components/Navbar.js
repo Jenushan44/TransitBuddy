@@ -24,24 +24,27 @@ function NavBar() {
 
   return (
     <div className="navbar">
-      {user ? (
-        <>
-          <Link to="/"><button className="navbar-button">Home</button></Link>
-          <Link to="/Profile"><button className="navbar-button">Profile</button></Link>
+      <div className="navbar-left">
+        <div className="logo">Transit<span className="highlight">Buddy</span></div>
+        <Link to="/" className="nav-link">Home</Link>
+        <Link to="/profile" className="nav-link">Profile</Link>
+      </div>
 
-          <p>Welcome {user.displayName || user.email}</p>
-          <button onClick={handleLogout}>Logout</button>
-        </>
-      ) : (
-        <>
-          <Link to="/"><button className="navbar-button">Home</button></Link>
-          <Link to="/Profile"><button className="navbar-button">Profile</button></Link>
-
-          <Link to="/login"><button className="navbar-button">Login</button></Link>
-          <Link to="/signup"><button className="navbar-button">Sign Up</button></Link>
-        </>
-      )}
+      <div className="navbar-right">
+        {user ? (
+          <>
+            <span className="welcome">Welcome, {user.displayName || user.email}</span>
+            <button className="navbar-button" onClick={handleLogout}>Logout</button>
+          </>
+        ) : (
+          <>
+            <Link to="/signup"><button className="navbar-button">Sign Up</button></Link>
+            <Link to="/login"><button className="navbar-button">Login</button></Link>
+          </>
+        )}
+      </div>
     </div>
+
   );
 }
 
