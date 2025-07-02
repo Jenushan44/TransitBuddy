@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { Polyline, Popup } from "react-leaflet";
+import { useRef } from 'react';
 
-function MapView({ selected, preferredDays, alerts, lastFetched }) {
+function MapView({ selected, preferredDays, alerts, lastFetched, clickedRoute }) {
 
   const [routeShapes, setRouteShapes] = useState({}); // Store all route shape data
+  const popupRefs = useRef({});
 
   function cleanRouteName(rawRoute) {
     return rawRoute.trim(); // Removes whitespace around route name
@@ -28,6 +30,21 @@ function MapView({ selected, preferredDays, alerts, lastFetched }) {
       alert.title && alert.title.toLowerCase().includes(routeName.toLowerCase()) // Check through all alerts to match route name
     );
   }
+
+  useEffect(() => {
+    if (
+      clickedRoute &&
+      // Checks if route has a popup 
+      popupRefs.current[clickedRoute] &&
+      // Makes sure that the route is connected to a shape
+      popupRefs.current[clickedRoute]._source &&
+      // Makes sure route has access to the map
+      popupRefs.current[clickedRoute]._source._map
+    ) {
+      popupRefs.current[clickedRoute]._source.openPopup();
+    }
+  }, [clickedRoute]);
+
 
   return (
     <div style={{ position: "relative" }}>
@@ -56,7 +73,13 @@ function MapView({ selected, preferredDays, alerts, lastFetched }) {
               positions={shape}
               pathOptions={{ color, weight: 2 }}
             >
-              <Popup>{`${routeName} (${alertActive ? "Alert" : "No Alert"})`}</Popup>
+              <Popup
+                ref={(ref) => {
+                  if (ref) popupRefs.current[routeName] = ref;
+                }}
+              >
+                {`${routeName} (${alertActive ? "Alert" : "No Alert"})`}
+              </Popup>
             </Polyline>
           );
         })}
