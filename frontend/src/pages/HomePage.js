@@ -1,201 +1,76 @@
 import React, { useEffect, useState } from 'react';
-import { signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
-import { getDoc, getDocs, collection } from "firebase/firestore";
+import { getDoc } from "firebase/firestore";
+import MapView from '../components/MapView';
 
-
-function HomePage() {
-  const [alerts, setAlerts] = useState([]) // Holds array of alert data
-  const options = ["504 King", "Line 1", "Line 2", "985 Sheppard East"]
-  const [selected, setSelected] = useState([])
-  const [user, setUser] = useState(null);
-  const database = getFirestore();
-  const [allRoutes, setAllRoutes] = useState([]);
-  const [userSearch, setUserSearch] = useState("");
-  const routesPerPage = 5;
-  const [currentPage, setCurrentPage] = useState(1);
-  const [telegramId, setTelegramId] = useState("");
+function HomePage({ selected, setSelected }) {
+  const [alerts, setAlerts] = useState([]) // All current TTC alerts
+  const [user, setUser] = useState(null); // Logged in user
+  const [lastFetched, setLastFetched] = useState(null); // Last time alerts were updated
 
   function fetchAlerts() {
-    fetch("http://localhost:5000/subway_alerts") // Get data from Flask 
-      .then(res => res.json()) // Turn the response into JSON
+    fetch("http://localhost:5000/subway_alerts") // Sends a Get request to /subway_alerts route
+      .then(res => res.json())
       .then(data => {
-        console.log("Fetched delay:", data);
-        setAlerts(data) // Save it into a state so React can use it
+        setAlerts(data)
+        setLastFetched(new Date()); // Store the timestamp of fetch 
       });
-    // Only runs one time, when the page first loads
   }
 
   useEffect(() => {
     fetchAlerts();
-    //Refresh alerts every 60 seconds 
-    const fetchInterval = setInterval(fetchAlerts, 60000);
-    return () => clearInterval(fetchInterval)
+    const fetchInterval = setInterval(fetchAlerts, 60000); // Set timer to run fetch alerts every 60 seconds
+    return () => clearInterval(fetchInterval) // Stop timer when page changes or componenet is removed 
   }, []);
 
-  function handleCheckBoxChange(item) {
-    let newSelected = [...selected] // Create new copy of array
-
-    if (newSelected.includes(item)) {
-      // Keep only items in array not equal to item
-      // If item in array, remove it because user is unchecking
-      newSelected = newSelected.filter(i => i !== item)
-    } else {
-      newSelected.push(item);
-    }
-    setSelected(newSelected);
+  function timeAgo(unixTime) {
+    if (!unixTime || isNaN(unixTime) || Number(unixTime) < 1000000000) return "unknown time"; // Handles any invalid timestamps
+    const diff = Date.now() / 1000 - Number(unixTime); // Difference between now  and the start time
+    if (diff < 60) return `Just now`;
+    if (diff < 3600) return `${Math.floor(diff / 60)} minutes ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
+    return `${Math.floor(diff / 86400)} days ago`;
   }
-
-  async function handleSavedRoutes() {
-    if (!user) {
-      alert("Please log in to save routes");
-      return;
-    }
-
-    try {
-
-      const userDataRef = doc(database, "users", user.uid) // Points to the users document in the users collection
-      await setDoc(userDataRef, {
-        selectedRoutes: selected,
-        email: user.email,
-        telegramId: telegramId
-      });
-      alert("Routes saved");
-      fetch("http://localhost:5000/send_alerts")
-        .then(res => res.text())
-        .then(data => {
-          console.log("Alert trigger response:", data);
-        })
-        .catch(error => {
-          console.error("Error sending alerts:", error);
-        });
-
-    } catch (error) {
-      alert("Error saving routes. Please try again")
-    }
-  }
-
-  async function displaySavedRoutes() {
-    if (!user) {
-      alert("Please log in to view saved routes");
-      return;
-    }
-
-    try {
-      const userDocRef = doc(database, "users", user.uid)
-      const userInfo = await getDoc(userDocRef)
-
-
-      if (userInfo.exists()) {
-        const data = userInfo.data();
-        setSelected(data.selectedRoutes || []);
-        setTelegramId(data.telegramId || "");
-      } else {
-        alert("No saved routes found.");
-      }
-    } catch (error) {
-      alert("Error viewing routes, Please try again")
-    }
-  }
-
 
   useEffect(() => {
-    const stopAuthListener = onAuthStateChanged(auth, (user) => {
+    const stopAuth = onAuthStateChanged(auth, async (user) => { // Sets up firebase auth listener that watches user login/logout
       if (user) {
         setUser(user);
-
-        displaySavedRoutes(user);
-
+        const userDocRef = doc(getFirestore(), "users", user.uid); // Get path to user document in Firestore
+        const userDoc = await getDoc(userDocRef); // Fetch user document 
+        if (userDoc.exists()) {
+          const userData = userDoc.data(); // Get actual data inside document
+          setSelected(userData.selectedRoutes || []);
+        }
       } else {
         setUser(null);
+        setSelected([]);
       }
     });
-    return () => stopAuthListener();
-  }, [])
-
-  useEffect(() => {
-    fetch("http://localhost:5000/all_routes")
-      .then(res => res.json())
-      .then(data => {
-        console.log("Fetched delay:", data);
-        setAllRoutes(data)
-      });
+    return () => stopAuth();
   }, []);
-
-  const start = (currentPage - 1) * routesPerPage;
-  const end = start + routesPerPage;
-
-  const filteredRoutes = allRoutes.filter(route => route.toLowerCase().includes(userSearch.toLowerCase()));
-
 
   return (
     <div>
-      {alerts.map((alert, index) => (
-        <div className="alert-box" key={index}>
-          <p>{alert.description}</p>
-
-        </div>
-      ))}
-
-      <div>
-        <h1>Choose your routes to personalize alerts</h1>
-        <input
-          type='text'
-          placeholder="Search routes"
-          value={userSearch}
-          onChange={(event) => {
-            setUserSearch(event.target.value);
-            setCurrentPage(1);
-          }}
-
-        >
-
-        </input>
-
-        <div className="route-scroll-bar">
-          {filteredRoutes.map((item) => {
-            return (
-              <label key={item} style={{ display: "block", margin: "5px" }}>
-                <input
-                  type='checkbox'
-                  checked={selected.includes(item)}
-                  onChange={() => handleCheckBoxChange(item)}
-                >
-                </input>
-                {item}
-              </label>
-            );
-          })}
-
-        </div>
-
-      </div>
-
-      <button onClick={handleSavedRoutes}>Save Routes</button>
-
+      {alerts.map((alert, index) => {
+        return (
+          <div className="alert-box" key={index}>
+            <p>{alert.description}</p>
+            <p>
+              {alert.start_time
+                ? `Started ${timeAgo(alert.start_time)}`
+                : "Start time not available"}
+            </p>
+          </div>
+        );
+      })}
       <div>
         <h1>Your Saved Routes</h1>
-        <button onClick={displaySavedRoutes} disabled={!user}>View your routes</button>
         <p>Selected: {selected.join(", ")}</p>
-
-
       </div>
-
-      <div>
-        <h2>Add Telegram Id Number</h2>
-        <div>
-          <p>Enter Telegram Id: </p>
-          <input
-            type="text"
-            value={telegramId}
-            onChange={e => { setTelegramId(e.target.value) }}
-          >
-          </input>
-
-
-        </div>
-      </div>
+      <MapView selected={selected} alerts={alerts} lastFetched={lastFetched} />
     </div>
   )
 }

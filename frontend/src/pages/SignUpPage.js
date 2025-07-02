@@ -4,15 +4,14 @@ import { auth, provider } from "../firebase.js";
 import { useNavigate } from 'react-router-dom';
 
 function SignUpPage() {
-
-  const [email, setEmail] = useState(null);
-  const [password, setPassword] = useState(null);
+  const [email, setEmail] = useState(null); // Store user email input
+  const [password, setPassword] = useState(null); // Store user password input
   const navigate = useNavigate()
 
   function handleSignUp() {
     createUserWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
-        console.log("User successfully signed up", userCredential.user)
+        console.log("User signed up successfully", userCredential.user)
         navigate("/")
       })
       .catch((error) => {
@@ -21,7 +20,6 @@ function SignUpPage() {
   }
 
   return (
-
     <div>
       <h1>Sign Up</h1>
       <p>Enter Email: </p>

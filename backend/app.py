@@ -8,39 +8,64 @@ import smtplib
 from email.message import EmailMessage
 import firebase_admin
 from firebase_admin import credentials, firestore
-
-
+import json
+import time
 
 app = Flask(__name__)
 
 from flask_cors import CORS
 CORS(app)
 
-load_dotenv()
+# Load stop coordinates into dictionary
+with open("route_coordinates.json", "r", encoding="utf-8") as f:
+    STOP_COORDINATES = json.load(f)
+
+load_dotenv() 
 EMAIL_USER=os.getenv("EMAIL_USER")
 EMAIL_PASS=os.getenv("EMAIL_PASS")
 
-
-@app.route('/')
-def status():
-    return 'TransitBuddy Backend is working!'
+# Store which alerts have been seen and when
+seen_alerts = {}
 
 @app.route("/subway_alerts")
 def subway_alerts():
-    response = requests.get("https://bustime.ttc.ca/gtfsrt/alerts") # gives back binary data
-    feed = FeedMessage() # Holds alert data from GTFS-RT 
-    feed.ParseFromString(response.content) # Decode binary data into Python
-    
+    response = requests.get("https://bustime.ttc.ca/gtfsrt/alerts")
+    feed = FeedMessage()
+    feed.ParseFromString(response.content)
+
+    now = int(time.time())
     alerts = []
+
     for entity in feed.entity:
-        alert = entity.alert 
-        cause = entity.alert.cause 
-        title = entity.alert.header_text.translation[0].text
-        description = entity.alert.description_text.translation[0].text
+        alert = entity.alert
+        start = None
+        end = None
+
+        if alert.active_period and len(alert.active_period) > 0:
+            period = alert.active_period[0]
+            start = getattr(period, "start", None)
+            end = getattr(period, "end", None)
+
+        if start and start > now:
+            continue
+        if end and end < now:
+            continue
+        
+        title = alert.header_text.translation[0].text
+        description = alert.description_text.translation[0].text
+        cause = alert.cause
+
+        if title not in seen_alerts:
+            seen_alerts[title] = now
+
+        if now - seen_alerts[title] > 6 * 3600:
+            continue
+
         alerts.append({
             "title": title,
             "description": description,
-            "cause": str(cause)  
+            "cause": str(cause),
+            "start_time": seen_alerts[title]  
         })
 
     return jsonify(alerts)
@@ -49,18 +74,14 @@ def subway_alerts():
 def get_all_routes(): 
     routes = []
 
-    with open("routes.txt", "r") as file: 
+    with open("data/routes.txt", "r") as file: 
         lines = csv.reader(file)
-
         for row in lines: 
             route_id = row[0] 
             route_p1 = row[2]
             route_p2 = row[3]
-
-            route_name = f"{route_p1} {route_p2}"
-            
+            route_name = f"{route_p1} {route_p2}"            
             routes.append(route_name) 
-
 
     return jsonify(routes)
 
@@ -112,13 +133,10 @@ def send_alerts():
                         send_telegram_message(telegram_id, f"TransitBuddy Alert: {route}\n{title}\n{description}")
                     if email: 
                         send_email(email, f"TransitBuddy Alert: {route}", f"{title}\n{description}")
-
-
                         print(f"Sent alert to {email} for {route}")
                     break 
 
     return "All alerts sent"
-
 
 def send_telegram_message(chat_id, message):
     bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -130,3 +148,13 @@ def send_telegram_message(chat_id, message):
     }
     requests.post(url, data=message_data)
 
+@app.route('/stop_coordinates')
+def stop_coordinates():
+    return jsonify(STOP_COORDINATES)
+
+@app.route('/')
+def status():
+    return "TransitBuddy Flask is running"
+
+if __name__ == '__main__':
+    app.run(debug=True)
