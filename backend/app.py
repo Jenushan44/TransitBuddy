@@ -161,5 +161,6 @@ def stop_coordinates():
 def status():
     return "TransitBuddy Flask is running"
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000)) # Get PORT number from Render or use 5000 as default if not set
+    app.run(debug=False, host="0.0.0.0", port=port)
