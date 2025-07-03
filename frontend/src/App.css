@@ -44,12 +44,15 @@
 
 .navbar {
   background-color: #1e1e1e;
-  padding: 10px 30px;
+  padding-top: 10px;
+  padding-right: 30px;
+  padding-bottom: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-family: 'Inter', sans-serif;
   flex-wrap: wrap;
+  padding-left: 30px;
 }
 
 .navbar-left {
@@ -126,8 +129,8 @@
 /* HomePage Banner */
 .banner-section {
   text-align: center;
-  margin: 0.5rem auto 2.5rem;
-  padding: 2rem 1rem;
+  margin: 8px auto 40px auto;
+  padding: 32px 16px 32px 16px;
   max-width: 800px;
   background-color: #ffffff;
   border-radius: 12px;
@@ -136,17 +139,16 @@
 
 
 .homepage-title {
-  font-size: 2rem;
+  font-size: 32px;
   font-weight: 800;
   color: #d71920;
-  margin-bottom: 0.5rem;
+  margin-bottom: 8px;
 }
 
 
 .homepage-subtitle {
-  font-size: 1.05rem;
+  font-size: 17px;
   color: #555;
-  margin-top: 0;
   font-style: italic;
 }
 
@@ -169,7 +171,7 @@
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-  height: 100%;
+  height: 640px;
 }
 
 .section-title {
@@ -179,7 +181,7 @@
 }
 
 .alerts-scroll {
-  max-height: 520px;
+  max-height: 550px;
   overflow-y: auto;
   padding-right: 8px;
   scroll-behavior: smooth;
@@ -223,8 +225,9 @@
 
 .saved-section {
   background-color: #f2f2f2;
-  padding: 18px 24px;
+  padding: 18px 24px 18px 24px;
   border-left: 6px solid #1e1e1e;
+  border-right: 6px solid #1e1e1e;
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
 }
@@ -269,7 +272,7 @@
 
 /* Map Box */
 .map-section {
-  height: 520px;
+  height: 540px;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
@@ -377,12 +380,6 @@
   background-color: #d71920;
 }
 
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
 .form-label {
   font-weight: bold;
 }
@@ -400,7 +397,7 @@
   grid-template-columns: 200px 200px;
   gap: 20px;
   align-items: center;
-  padding: 10px 0;
+  padding: 10px 0px 10px 0px;
   justify-content: center;
 }
 
@@ -444,4 +441,109 @@
 
 .save-routes-button:hover {
   background-color: #a7151a;
+}
+
+/*Login and Signup Page*/
+
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+  background-color: #f9f9f9;
+}
+
+
+.login-card {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.login-card h1 {
+  margin-bottom: 20px;
+  color: #1e1e1e;
+}
+
+.login-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+
+
+
+.login-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.login-btn {
+  flex: 1;
+  background-color: #d71920;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.login-btn:hover {
+  background-color: #a7151a;
+
+}
+
+.google-btn {
+  flex: 1;
+  background-color: #4285F4;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.google-btn:hover {
+  background-color: #3367d6;
+}
+
+.forgot-password {
+  margin-top: 10px;
+  color: #555;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: underline;
+
+}
+
+.forgot-password:hover {
+  color: #d71920;
+}
+
+.signup-text {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #444;
+}
+
+.signup-link {
+  color: #d71920;
+  font-weight: bold;
+  text-decoration: none;
+
+}
+
+.signup-link:hover {
+  text-decoration: underline;
 }

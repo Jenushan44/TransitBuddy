@@ -2,7 +2,7 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "fire
 import React, { useEffect, useState } from 'react';
 import { auth, provider } from "../firebase.js";
 import { useNavigate } from 'react-router-dom';
-import { signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
+import { signInWithPopup, signOut, onAuthStateChanged, sendPasswordResetEmail } from "firebase/auth";
 
 function LoginPage() {
 
@@ -22,10 +22,28 @@ function LoginPage() {
       });
   }
 
+  function handlePasswordReset() {
+    if (!email) {
+      alert("Please enter your email first.");
+      return;
+    }
+
+    sendPasswordResetEmail(auth, email)
+      .then(() => {
+        alert("Password reset email sent");
+      })
+      .catch((error) => {
+        console.error("Password reset error:", error);
+        alert("Failed to send reset email. Please try again.");
+      });
+  }
+
+
   function handleGoogleLogin() {
     signInWithPopup(auth, provider)
       .then(result => {
         console.log("User logged in: ", result.user);
+        navigate("/")
       })
       .catch((error) => {
         console.error("Login error: ", error);
@@ -44,15 +62,41 @@ function LoginPage() {
   }, [])
 
   return (
-    <div>
-      <h1>Login Page</h1>
-      <p>Email: </p>
-      <input type="email" onChange={(event) => setEmail(event.target.value)}></input>
-      <p>Password: </p>
-      <input type="password" onChange={(event) => setPassword(event.target.value)}></input>
-      <button onClick={handleLogin}>Login</button>
-      <button onClick={handleGoogleLogin}>Google</button>
+    <div className="login-page">
+      <div className="login-card">
+        <h1>Login</h1>
+
+        <input
+          type="email"
+          className="login-input"
+          placeholder="Enter email"
+          onChange={(e) => setEmail(e.target.value)}
+        />
+
+        <input
+          type="password"
+          className="login-input"
+          placeholder="Enter password"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+
+        <div className="login-buttons">
+          <button className="login-btn" onClick={handleLogin}>Login</button>
+          <button className="google-btn" onClick={handleGoogleLogin}>Google</button>
+        </div>
+
+        <p className="forgot-password" onClick={handlePasswordReset}>
+          Forgot password?
+        </p>
+
+
+        <p className="signup-text">
+          Don’t have an account?{" "}
+          <a className="signup-link" href="/signup">Sign up</a>
+        </p>
+      </div>
     </div>
+
   )
 }
 

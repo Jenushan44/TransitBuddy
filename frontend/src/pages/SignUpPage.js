@@ -1,7 +1,7 @@
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import React, { useEffect, useState } from 'react';
 import { auth, provider } from "../firebase.js";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 function SignUpPage() {
   const [email, setEmail] = useState(null); // Store user email input
@@ -20,15 +20,36 @@ function SignUpPage() {
   }
 
   return (
-    <div>
-      <h1>Sign Up</h1>
-      <p>Enter Email: </p>
-      <input type="email" onChange={(event) => setEmail(event.target.value)}></input>
-      <p>Enter Password: </p>
-      <input type="password" onChange={(event) => setPassword(event.target.value)}></input>
-      <button onClick={handleSignUp}>Sign up</button>
+    <div className="login-page">
+      <div className="login-card">
+        <h1>Create Account</h1>
+
+        <input
+          type="email"
+          placeholder="Enter email"
+          onChange={(e) => setEmail(e.target.value)}
+          className="login-input"
+        />
+
+        <input
+          type="password"
+          placeholder="Enter password"
+          onChange={(e) => setPassword(e.target.value)}
+          className="login-input"
+        />
+
+        <button onClick={handleSignUp} className="login-btn">
+          Sign Up
+        </button>
+
+        <p className="signup-text">
+          Already have an account? <a href="/login" className="signup-link">Log in</a>
+        </p>
+      </div>
     </div>
-  )
+
+
+  );
 }
 
 export default SignUpPage;

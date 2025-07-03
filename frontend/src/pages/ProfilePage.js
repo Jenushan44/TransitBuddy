@@ -125,7 +125,7 @@ function ProfilePage({ preferredDays, setPreferredDays, selected, setSelected })
   return (
     <div>
       <div className="profile-section">
-        <h2>User Info</h2>
+        <h2>Your TransitBuddy Profile</h2>
         <div className="user-info-grid">
           <div className="user-label">Name:</div>
           <div className="user-value">{user?.displayName || "N/A"}</div>
@@ -156,11 +156,12 @@ function ProfilePage({ preferredDays, setPreferredDays, selected, setSelected })
       </div>
 
       <div className="profile-section">
-        <h2>Update Telegram ID</h2>
+        <h2>Link Your Telegram for Alerts</h2>
         <div className="form-group">
           <input
             id="telegram"
             type="text"
+            placeholder="Enter Telegram ID"
             className="form-input"
             value={telegramIdInput}
             onChange={e => setTelegramIdInput(e.target.value)}
@@ -172,7 +173,7 @@ function ProfilePage({ preferredDays, setPreferredDays, selected, setSelected })
       </div>
 
       <div className="profile-section">
-        <h2>Select Preferred Days</h2>
+        <h2>Set Your Alert Schedule</h2>
         <div className="day-buttons">
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, idx) => (
             <button
