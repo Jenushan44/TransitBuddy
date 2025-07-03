@@ -1,8 +1,8 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { auth, provider } from "../firebase.js";
 import { useNavigate, Link } from 'react-router-dom';
-import { signInWithPopup, onAuthStateChanged, sendPasswordResetEmail } from "firebase/auth";
+import { signInWithPopup, sendPasswordResetEmail } from "firebase/auth";
 
 function LoginPage() {
 
