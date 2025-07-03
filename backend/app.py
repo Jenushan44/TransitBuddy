@@ -76,14 +76,19 @@ def get_all_routes():
 
     with open("data/routes.txt", "r") as file: 
         lines = csv.reader(file)
+        next(lines) # Skip first row (route_id)
         for row in lines: 
-            route_id = row[0] 
             route_p1 = row[2]
             route_p2 = row[3]
-            route_name = f"{route_p1} {route_p2}"            
+
+            if route_p1 in route_p2:
+                route_name = route_p2 # Handles Line 1 and Line 2 subway cases
+            else:
+                route_name = f"{route_p1} {route_p2}"
+            
             routes.append(route_name) 
 
-    return jsonify(routes)
+    return jsonify(sorted(routes))
 
 def send_email(recipient, subject, body): 
     message = EmailMessage() 

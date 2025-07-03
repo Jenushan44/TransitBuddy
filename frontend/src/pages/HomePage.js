@@ -30,11 +30,22 @@ function HomePage({ selected, setSelected }) {
   }, []);
 
   function timeAgo(unixTime) {
-    if (!unixTime || isNaN(unixTime) || Number(unixTime) < 1000000000) return "unknown time"; // Handles any invalid timestamps
+    if (!unixTime || isNaN(unixTime)) { // Handles any invalid timestamps 
+      return "unknown time";
+    }
     const diff = Date.now() / 1000 - Number(unixTime); // Difference between now  and the start time
-    if (diff < 60) return `Just now`;
-    if (diff < 3600) return `${Math.floor(diff / 60)} minutes ago`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
+
+    if (diff < 60) {
+      return "Just now";
+    }
+
+    if (diff < 3600) {
+      return `${Math.floor(diff / 60)} minutes ago`;
+    }
+
+    if (diff < 86400) {
+      return `${Math.floor(diff / 3600)} hours ago`;
+    }
     return `${Math.floor(diff / 86400)} days ago`;
   }
 
@@ -42,8 +53,8 @@ function HomePage({ selected, setSelected }) {
     const stopAuth = onAuthStateChanged(auth, async (user) => { // Sets up firebase auth listener that watches user login/logout
       if (user) {
         setUser(user);
-        const userDocRef = doc(getFirestore(), "users", user.uid); // Get path to user document in Firestore
-        const userDoc = await getDoc(userDocRef); // Fetch user document 
+        const userDocReference = doc(getFirestore(), "users", user.uid); // Get path to user document in Firestore
+        const userDoc = await getDoc(userDocReference); // Fetch user document 
         if (userDoc.exists()) {
           const userData = userDoc.data(); // Get actual data inside document
           setSelected(userData.selectedRoutes || []);
@@ -58,9 +69,12 @@ function HomePage({ selected, setSelected }) {
 
   const handleRouteClick = (routeName) => {
     setClickedRoute(routeName);
-    const match = alerts.find(alert =>
-      alert.description && alert.description.toLowerCase().includes(routeName.toLowerCase())
-    );
+    const match = alerts.find(alert => {
+      const cleanAlert = alert.description?.toLowerCase().replace(/\d+\sline\s/, 'line ');
+      const cleanRoute = routeName.toLowerCase().replace(/\d+\s*/, '');
+      return cleanAlert && cleanAlert.includes(cleanRoute);
+    });
+
 
     if (match) {
       const alertId = `alert-${alerts.indexOf(match)}`;

@@ -5,10 +5,11 @@ import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { getDoc } from "firebase/firestore";
 
 function ProfilePage({ preferredDays, setPreferredDays, selected, setSelected }) {
-  const [telegramId, setTelegramId] = useState(""); // Store Telegram user input
+  const [telegramId, setTelegramId] = useState("");
+  const [telegramIdInput, setTelegramIdInput] = useState(""); // Telegram Id input field value
   const [user, setUser] = useState(null); // Tracks the current user
   const database = getFirestore();
-  const [allRoutes, setAllRoutes] = useState([]); // Holds all available routes
+  const [allRoutes, setAllRoutes] = useState([]);
   const [userSearch, setUserSearch] = useState(""); // Store users route search
 
   // Switch a selected day on or off in prefferedDays
@@ -28,18 +29,18 @@ function ProfilePage({ preferredDays, setPreferredDays, selected, setSelected })
     }
 
     try {
-      const userDataRef = doc(database, "users", user.uid)
+      const userDataReference = doc(database, "users", user.uid)
       // Save user's telegramID and preferredDays with existing data 
-      await setDoc(userDataRef, {
-        telegramId: telegramId,
+      await setDoc(userDataReference, {
+        telegramId: telegramIdInput,
         preferredDays: preferredDays
       }, { merge: true });
-      alert("Routes saved");
+      alert("Telegram ID saved");
+      setTelegramId(telegramIdInput);
+      setTelegramIdInput("");
 
       fetch("http://localhost:5000/send_alerts")
         .then(res => res.text())
-        .then(data => {
-        })
         .catch(error => {
           console.error("Error sending alerts:", error);
         });
@@ -53,12 +54,14 @@ function ProfilePage({ preferredDays, setPreferredDays, selected, setSelected })
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUser(user);
-        const userDocRef = doc(database, "users", user.uid);
-        const userDoc = await getDoc(userDocRef);
+        const userDocReference = doc(database, "users", user.uid);
+        const userDoc = await getDoc(userDocReference);
         if (userDoc.exists()) {
           const userData = userDoc.data();
           setTelegramId(userData.telegramId || "");
+          setTelegramIdInput("");
           setPreferredDays(userData.preferredDays || [0, 1, 2, 3, 4, 5, 6]);
+          setSelected(userData.selectedRoutes || []);
         }
       } else {
         setUser(null);
@@ -92,71 +95,125 @@ function ProfilePage({ preferredDays, setPreferredDays, selected, setSelected })
   // Filters routes based on user search input
   const filteredRoutes = allRoutes.filter(route =>
     route.toLowerCase().includes(userSearch.toLowerCase())
-  );
+  )
+    .filter(route =>
+      !route.toLowerCase().includes("route_short_name") &&
+      !route.toLowerCase().includes("route_long_name"));
+
+
+  const saveSelectedRoutes = async () => {
+    if (!user) {
+      alert("Please log in to save routes");
+      return;
+    }
+
+    try {
+      const userDataReference = doc(database, "users", user.uid);
+      await setDoc(userDataReference, {
+        selectedRoutes: selected
+      }, { merge: true });
+
+      alert("Routes saved!");
+    } catch (error) {
+      alert("Failed to save routes.");
+      console.error("Save routes error:", error);
+    }
+  };
+
+
 
   return (
     <div>
-      <h1>Profile Page</h1>
-      <div>
-        <h1>Select preferred days</h1>
-        <div style={{ padding: "10px", textAlign: "center" }}>
+      <div className="profile-section">
+        <h2>User Info</h2>
+        <div className="user-info-grid">
+          <div className="user-label">Name:</div>
+          <div className="user-value">{user?.displayName || "N/A"}</div>
+
+          <div className="user-label">Email:</div>
+          <div className="info-with-button">
+            <div className="user-value">{user?.email || "N/A"}</div>
+          </div>
+
+          <div className="user-label">Telegram ID:</div>
+          <div className="info-with-button">
+            <div className="user-value">{telegramId}</div>
+            {telegramId && (
+              <button
+                className="delete-button"
+                onClick={async () => {
+                  const userDataReference = doc(database, "users", user.uid);
+                  await setDoc(userDataReference, { telegramId: "" }, { merge: true });
+                  setTelegramId("");
+                  setTelegramIdInput("");
+                }}
+              >
+                Delete
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="profile-section">
+        <h2>Update Telegram ID</h2>
+        <div className="form-group">
+          <input
+            id="telegram"
+            type="text"
+            className="form-input"
+            value={telegramIdInput}
+            onChange={e => setTelegramIdInput(e.target.value)}
+          />
+          <button className="navbar-button" onClick={handleSavedRoutes}>
+            Save ID
+          </button>
+        </div>
+      </div>
+
+      <div className="profile-section">
+        <h2>Select Preferred Days</h2>
+        <div className="day-buttons">
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day, idx) => (
             <button
               key={idx}
+              className={`day-button ${preferredDays.includes(idx) ? "selected" : ""}`}
               onClick={() => selectDay(idx)}
-              style={{
-                margin: "5px",
-                padding: "8px 12px",
-                borderRadius: "5px",
-                backgroundColor: preferredDays.includes(idx) ? "#007bff" : "#ccc",
-                color: "white",
-                border: "none",
-                cursor: "pointer"
-              }}
             >
               {day}
             </button>
           ))}
         </div>
       </div>
-      <div>
-        <h2>Add Telegram Id Number</h2>
-        <div>
-          <p>Enter Telegram Id: </p>
-          <input
-            type="text"
-            value={telegramId}
-            onChange={e => setTelegramId(e.target.value)}
-          />
-        </div>
-      </div>
-      <button onClick={handleSavedRoutes}>Save Preferences</button>
-      <div>
-        <h1>Choose your routes to personalize alerts</h1>
+
+      <div className="profile-section">
+        <h2>Choose your routes to personalize alerts</h2>
         <input
-          type='text'
+          type="text"
+          className="form-input"
           placeholder="Search routes"
           value={userSearch}
-          onChange={(event) => {
-            setUserSearch(event.target.value);
-          }}
-        >
-        </input>
-        <div className="route-scroll-bar" style={{ maxHeight: "300px", overflowY: "scroll", border: "1px solid #ccc", padding: "10px" }}>
+          onChange={(e) => setUserSearch(e.target.value)}
+        />
+        <div className="checkbox-grid">
           {filteredRoutes.map((item) => (
-            <label key={item} style={{ display: "block", margin: "5px" }}>
+            <label key={item} style={{ display: "flex", alignItems: "center", gap: "6px" }}>
               <input
                 type="checkbox"
                 checked={selected.includes(item)}
                 onChange={() => handleCheckBoxChange(item)}
               />
-              {item}
+              <span className="route-label-text">{item}</span>
             </label>
           ))}
         </div>
+        <button className="save-routes-button" onClick={saveSelectedRoutes}>
+          Save Routes
+        </button>
+
       </div>
     </div>
-  )
-}
+  );
 
+}
 export default ProfilePage

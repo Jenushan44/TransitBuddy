@@ -6,11 +6,14 @@ import { useRef } from 'react';
 
 function MapView({ selected, preferredDays, alerts, lastFetched, clickedRoute }) {
 
-  const [routeShapes, setRouteShapes] = useState({}); // Store all route shape data
+  const [routeShapes, setRouteShapes] = useState({});
   const popupRefs = useRef({});
 
-  function cleanRouteName(rawRoute) {
-    return rawRoute.trim(); // Removes whitespace around route name
+  function normalize(name) {
+    if (!name || typeof name !== "string") {
+      return "";
+    }
+    return name.toLowerCase().replace(/^\d+\s*/, '').trim();
   }
 
   useEffect(() => {
@@ -22,27 +25,19 @@ function MapView({ selected, preferredDays, alerts, lastFetched, clickedRoute })
       .catch(err => console.error("Failed to load shapes:", err));
   }, []);
 
-  console.log("Selected routes:", selected);
-
   // Check if route has an active alert
   function hasAlert(routeName) {
-    return alerts.some(alert =>
-      alert.title && alert.title.toLowerCase().includes(routeName.toLowerCase()) // Check through all alerts to match route name
-    );
+    const normRoute = normalize(routeName);
+    return alerts.some(alert => {
+      const alertTitle = alert.title?.toLowerCase() || "";
+      return normalize(alertTitle).includes(normRoute);
+    });
   }
 
+
   useEffect(() => {
-    if (
-      clickedRoute &&
-      // Checks if route has a popup 
-      popupRefs.current[clickedRoute] &&
-      // Makes sure that the route is connected to a shape
-      popupRefs.current[clickedRoute]._source &&
-      // Makes sure route has access to the map
-      popupRefs.current[clickedRoute]._source._map
-    ) {
-      popupRefs.current[clickedRoute]._source.openPopup();
-    }
+    const normClicked = normalize(clickedRoute);
+    popupRefs.current[normClicked]?._source?.openPopup();
   }, [clickedRoute]);
 
 
@@ -50,8 +45,8 @@ function MapView({ selected, preferredDays, alerts, lastFetched, clickedRoute })
     <div style={{ position: "relative" }}>
 
       <MapContainer
-        center={[43.651070, -79.347015]}
-        zoom={13}
+        center={[43.5, -79.35]}
+        zoom={11}
         style={{ height: "100vh", width: "100%" }}
       >
         <TileLayer
@@ -59,9 +54,13 @@ function MapView({ selected, preferredDays, alerts, lastFetched, clickedRoute })
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
         />
 
-        {selected.map((routeName, idx) => {
-          const name = cleanRouteName(routeName);
-          const shape = routeShapes[name];
+        {selected.map((routeName, index) => {
+          const name = routeName.trim();
+          const shapeKey = Object.keys(routeShapes).find(key =>
+            key.toLowerCase().includes(name.toLowerCase())
+          );
+          const shape = routeShapes[shapeKey];
+
           if (!shape) return null;
 
           const alertActive = hasAlert(routeName);
@@ -69,13 +68,15 @@ function MapView({ selected, preferredDays, alerts, lastFetched, clickedRoute })
 
           return (
             <Polyline
-              key={idx}
+              key={index}
               positions={shape}
               pathOptions={{ color, weight: 2 }}
             >
               <Popup
                 ref={(ref) => {
-                  if (ref) popupRefs.current[routeName] = ref;
+                  if (ref) {
+                    popupRefs.current[normalize(routeName)] = ref;
+                  }
                 }}
               >
                 {`${routeName} (${alertActive ? "Alert" : "No Alert"})`}
