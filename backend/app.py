@@ -126,7 +126,6 @@ def send_alerts():
         saved_routes = data.get("selectedRoutes", [])
         telegram_id = data.get("telegramId")
         
-
         for entity in feed.entity: 
             alert = entity.alert
             title = alert.header_text.translation[0].text
