@@ -17,7 +17,7 @@ from flask_cors import CORS
 CORS(app)
 
 # Load stop coordinates into dictionary
-with open("route_coordinates.json", "r", encoding="utf-8") as f:
+with open("backend/route_coordinates.json", "r", encoding="utf-8") as f:
     STOP_COORDINATES = json.load(f)
 
 load_dotenv() 
