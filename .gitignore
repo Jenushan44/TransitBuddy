@@ -33,6 +33,6 @@ yarn-error.log*
 
 # TTC GTFS files
 ttc_stops.json
-
+stop_times.txt
 
 

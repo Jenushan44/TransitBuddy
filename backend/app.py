@@ -100,10 +100,8 @@ def send_email(recipient, subject, body):
         with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
             smtp.login(EMAIL_USER, EMAIL_PASS)
             smtp.send_message(message)
-        print(f"Email sent to {recipient}")
         return True
     except Exception as error: 
-        print("Error sending email:", error)
         return False
 
 # Connects app to firestore to access user's saved routes and read email address 
@@ -125,7 +123,9 @@ def send_alerts():
         email = data.get("email")
         saved_routes = data.get("selectedRoutes", [])
         telegram_id = data.get("telegramId")
-        
+
+        matching_alerts = [] # Holds all alerts that match with user's saved routes
+
         for entity in feed.entity: 
             alert = entity.alert
             title = alert.header_text.translation[0].text
@@ -133,12 +133,20 @@ def send_alerts():
 
             for route in saved_routes: 
                 if route.lower() in title.lower():
-                    if telegram_id:
-                        send_telegram_message(telegram_id, f"TransitBuddy Alert: {route}\n{title}\n{description}")
-                    if email: 
-                        send_email(email, f"TransitBuddy Alert: {route}", f"{title}\n{description}")
-                        print(f"Sent alert to {email} for {route}")
-                    break 
+                    matching_alerts.append((route, title, description))
+                    break  
+
+        if matching_alerts and email:
+            email_body = "Hi,\n\nHere are your current TTC alerts:\n\n"
+            for route, title, description in matching_alerts:
+                email_body += f"Route: {route}\n- {title}\n- {description}\n\n"
+            email_body += "Stay safe,\nThe TransitBuddy Team"
+
+            send_email(email, "Your TransitBuddy Alerts", email_body)
+
+        for route, title, description in matching_alerts:
+            if telegram_id:
+                send_telegram_message(telegram_id, f"TransitBuddy Alert: {route}\n{title}\n{description}")
 
     return "All alerts sent"
 
