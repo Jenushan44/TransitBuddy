@@ -8,7 +8,6 @@ import MapView from '../components/MapView';
 
 function HomePage({ selected, setSelected, preferredDays }) {
   const [alerts, setAlerts] = useState([]) // All current TTC alerts
-  const [user, setUser] = useState(null); // Logged in user
   const [lastFetched, setLastFetched] = useState(null); // Last time alerts were updated
   const [clickedRoute, setClickedRoute] = useState(null);
 
@@ -51,7 +50,6 @@ function HomePage({ selected, setSelected, preferredDays }) {
   useEffect(() => {
     const stopAuth = onAuthStateChanged(auth, async (user) => { // Sets up firebase auth listener that watches user login/logout
       if (user) {
-        setUser(user);
         const userDocReference = doc(getFirestore(), "users", user.uid); // Get path to user document in Firestore
         const userDoc = await getDoc(userDocReference); // Fetch user document 
         if (userDoc.exists()) {
@@ -64,7 +62,7 @@ function HomePage({ selected, setSelected, preferredDays }) {
       }
     });
     return () => stopAuth();
-  }, []);
+  }, [setSelected]);
 
   const handleRouteClick = (routeName) => {
     setClickedRoute(routeName);

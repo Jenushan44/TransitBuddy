@@ -70,7 +70,7 @@ function ProfilePage({ preferredDays, setPreferredDays, selected, setSelected })
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [database, setPreferredDays, setSelected]);
 
   useEffect(() => {
     fetch("https://transitbuddy.onrender.com/all_routes")

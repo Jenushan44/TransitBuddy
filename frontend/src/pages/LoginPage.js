@@ -8,7 +8,6 @@ function LoginPage() {
 
   const [email, setEmail] = useState(null) // Store user email input 
   const [password, setPassword] = useState(null) // Store user password input 
-  const [user, setUser] = useState(null); // Store logged in user
   const navigate = useNavigate(); // Redirect user after login
 
   function handleLogin() {
