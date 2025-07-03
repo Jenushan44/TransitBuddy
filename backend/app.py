@@ -1,9 +1,9 @@
 import requests # Allow backend to make HTTP requests and get page content
-from gtfs_realtime_pb2 import FeedMessage
 import csv
 from flask import Flask, jsonify
 from dotenv import load_dotenv
 import os
+import sys
 import smtplib
 from email.message import EmailMessage
 from pathlib import Path
@@ -11,6 +11,9 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 import json
 import time
+sys.path.append(os.path.dirname(__file__))
+
+from gtfs_realtime_pb2 import FeedMessage
 
 app = Flask(__name__)
 
