@@ -22,7 +22,6 @@ frontend/build/
 .env.development.local
 .env.test.local
 .env.production.local
-firebase.js 
 firebase_key.json
 frontend/env
 
