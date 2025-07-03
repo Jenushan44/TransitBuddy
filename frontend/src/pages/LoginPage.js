@@ -18,6 +18,7 @@ function LoginPage() {
       })
       .catch((error) => {
         console.log("Error: Login failed", error.message)
+        alert("Error: Account not found.")
       });
   }
 

@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 import os
 import smtplib
 from email.message import EmailMessage
+from pathlib import Path
 import firebase_admin
 from firebase_admin import credentials, firestore
 import json
@@ -20,7 +21,7 @@ CORS(app)
 with open("backend/route_coordinates.json", "r", encoding="utf-8") as f:
     STOP_COORDINATES = json.load(f)
 
-load_dotenv() 
+load_dotenv(dotenv_path=Path(__file__).parent / ".env")
 EMAIL_USER=os.getenv("EMAIL_USER")
 EMAIL_PASS=os.getenv("EMAIL_PASS")
 
@@ -146,7 +147,12 @@ def send_alerts():
 
         for route, title, description in matching_alerts:
             if telegram_id:
-                send_telegram_message(telegram_id, f"TransitBuddy Alert: {route}\n{title}\n{description}")
+                message = (
+                    f"TransitBuddy Alert\n"
+                    f"Route: {route}\n\n"
+                    f"Alert: {description}"
+                )
+                send_telegram_message(telegram_id, message)
 
     return "All alerts sent"
 
