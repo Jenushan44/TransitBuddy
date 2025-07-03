@@ -37,6 +37,5 @@ stops.txt
 shapes.txt 
 stop_times.txt 
 trips.txt
-frontend/public/ordered_route_shapes.json
 
 

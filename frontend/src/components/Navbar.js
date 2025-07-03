@@ -1,5 +1,5 @@
-import { signInWithPopup, signOut, onAuthStateChanged } from "firebase/auth";
-import { auth, provider } from "../firebase.js";
+import { signOut, onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase.js";
 import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 

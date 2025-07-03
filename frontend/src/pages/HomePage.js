@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { getFirestore, doc } from "firebase/firestore";
 import { getDoc } from "firebase/firestore";
 import MapView from '../components/MapView';
-import { useRef } from 'react';
 
 
-function HomePage({ selected, setSelected }) {
+function HomePage({ selected, setSelected, preferredDays }) {
   const [alerts, setAlerts] = useState([]) // All current TTC alerts
   const [user, setUser] = useState(null); // Logged in user
   const [lastFetched, setLastFetched] = useState(null); // Last time alerts were updated

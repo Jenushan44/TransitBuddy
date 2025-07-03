@@ -1,8 +1,8 @@
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import React, { useEffect, useState } from 'react';
 import { auth, provider } from "../firebase.js";
-import { useNavigate } from 'react-router-dom';
-import { signInWithPopup, signOut, onAuthStateChanged, sendPasswordResetEmail } from "firebase/auth";
+import { useNavigate, Link } from 'react-router-dom';
+import { signInWithPopup, onAuthStateChanged, sendPasswordResetEmail } from "firebase/auth";
 
 function LoginPage() {
 
@@ -92,7 +92,7 @@ function LoginPage() {
 
         <p className="signup-text">
           Don’t have an account?{" "}
-          <a className="signup-link" href="/signup">Sign up</a>
+          <Link className="signup-link" to="/signup">Sign Up</Link>
         </p>
       </div>
     </div>

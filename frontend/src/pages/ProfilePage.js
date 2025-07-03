@@ -116,7 +116,6 @@ function ProfilePage({ preferredDays, setPreferredDays, selected, setSelected })
       alert("Routes saved!");
     } catch (error) {
       alert("Failed to save routes.");
-      console.error("Save routes error:", error);
     }
   };
 
