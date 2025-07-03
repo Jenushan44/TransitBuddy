@@ -21,7 +21,7 @@ function App() {
 
 
   useEffect(() => {
-    fetch("http://localhost:5000/subway_alerts") // Get data from Flask 
+    fetch("https://transitbuddy.onrender.com/subway_alerts") // Get data from Flask 
       .then(res => res.json()) // Turn the response into JSON
       .then(data => {
         console.log("Fetched delay:", data);

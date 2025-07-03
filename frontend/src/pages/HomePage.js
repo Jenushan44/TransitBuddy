@@ -15,7 +15,7 @@ function HomePage({ selected, setSelected }) {
 
 
   function fetchAlerts() {
-    fetch("http://localhost:5000/subway_alerts") // Sends a Get request to /subway_alerts route
+    fetch("https://transitbuddy.onrender.com/subway_alerts") // Sends a Get request to /subway_alerts route
       .then(res => res.json())
       .then(data => {
         setAlerts(data)

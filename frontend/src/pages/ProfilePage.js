@@ -39,7 +39,7 @@ function ProfilePage({ preferredDays, setPreferredDays, selected, setSelected })
       setTelegramId(telegramIdInput);
       setTelegramIdInput("");
 
-      fetch("http://localhost:5000/send_alerts")
+      fetch("https://transitbuddy.onrender.com/send_alerts")
         .then(res => res.text())
         .catch(error => {
           console.error("Error sending alerts:", error);
@@ -73,7 +73,7 @@ function ProfilePage({ preferredDays, setPreferredDays, selected, setSelected })
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:5000/all_routes")
+    fetch("https://transitbuddy.onrender.com/all_routes")
       .then(res => res.json())
       .then(data => {
         setAllRoutes(data)
