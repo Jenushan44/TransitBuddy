@@ -1,5 +1,5 @@
 import requests # Allow backend to make HTTP requests and get page content
-from gtfs_realtime_pb2 import FeedMessage
+from backend.gtfs_realtime_pb2 import FeedMessage
 import csv
 from flask import Flask, jsonify
 from dotenv import load_dotenv
