@@ -73,8 +73,8 @@ def subway_alerts():
 @app.route("/all_routes")
 def get_all_routes(): 
     routes = []
-
-    with open("data/routes.txt", "r") as file: 
+    file_path = os.path.join(os.path.dirname(__file__), "data", "routes.txt")
+    with open(file_path, "r") as file: 
         lines = csv.reader(file)
         next(lines) # Skip first row (route_id)
         for row in lines: 
