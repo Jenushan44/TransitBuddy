@@ -1,6 +1,5 @@
-#!/bin/bash
-
-#python3 -m grpc_tools.protoc -I=backend --python_out=backend backend/gtfs-realtime.proto
+#!/usr/bin/env bash
+python -m grpc_tools.protoc -I. --python_out=./backend ./backend/gtfs-realtime.proto
 
 cd frontend
 npm ci
