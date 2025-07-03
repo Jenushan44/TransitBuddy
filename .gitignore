@@ -24,7 +24,7 @@ frontend/build/
 .env.production.local
 firebase.js 
 firebase_key.json
-
+frontend/env
 
 # Log files 
 npm-debug.log*
