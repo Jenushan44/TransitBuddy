@@ -1,5 +1,5 @@
 import requests # Allow backend to make HTTP requests and get page content
-from backend.gtfs_realtime_pb2 import FeedMessage
+from gtfs_realtime_pb2 import FeedMessage
 import csv
 from flask import Flask, jsonify
 from dotenv import load_dotenv
@@ -18,7 +18,7 @@ from flask_cors import CORS
 CORS(app)
 
 # Load stop coordinates into dictionary
-with open("backend/route_coordinates.json", "r", encoding="utf-8") as f:
+with open("route_coordinates.json", "r", encoding="utf-8") as f:
     STOP_COORDINATES = json.load(f)
 
 load_dotenv(dotenv_path=Path(__file__).parent / ".env")
