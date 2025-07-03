@@ -57,7 +57,6 @@ function HomePage({ selected, setSelected, preferredDays }) {
           setSelected(userData.selectedRoutes || []);
         }
       } else {
-        setUser(null);
         setSelected([]);
       }
     });

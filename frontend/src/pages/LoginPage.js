@@ -49,17 +49,6 @@ function LoginPage() {
       });
   }
 
-  useEffect(() => {
-    const stopAuthListener = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-      }
-    });
-    return () => stopAuthListener();
-  }, [])
-
   return (
     <div className="login-page">
       <div className="login-card">
