@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { auth, provider } from "../firebase.js";
 import { useNavigate, Link } from 'react-router-dom';
 import { signInWithPopup, sendPasswordResetEmail } from "firebase/auth";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
 
 function LoginPage() {
 
@@ -41,8 +42,15 @@ function LoginPage() {
 
   function handleGoogleLogin() {
     signInWithPopup(auth, provider)
-      .then(result => {
+      .then(async (result) => {
         console.log("User logged in: ", result.user);
+
+        const database = getFirestore();
+        const userInfo = doc(database, "users", result.user.uid); // Saves user email to firestore
+        await setDoc(userInfo, {
+          email: result.user.email
+        }, { merge: true }) // Only adds the email instead of overwriting data 
+
         navigate("/")
       })
       .catch((error) => {

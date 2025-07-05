@@ -37,6 +37,12 @@ def subway_alerts():
     feed = FeedMessage()
     feed.ParseFromString(response.content)
 
+    for title in list(seen_alerts.keys()):
+        # If alert is older then 24 hours, then removed
+        if now - seen_alerts[title] > 24 * 3600:
+            del seen_alerts[title]
+
+
     now = int(time.time())
     alerts = []
 
@@ -59,17 +65,24 @@ def subway_alerts():
         description = alert.description_text.translation[0].text
         cause = alert.cause
 
-        if title not in seen_alerts:
-            seen_alerts[title] = now
+        user_alerts = database.collection("alert_times").document(title)
+        stored_document = user_alerts.get()
 
-        if now - seen_alerts[title] > 6 * 3600:
-            continue
+        if stored_document.exists: 
+            start_time = stored_document.to_dict().get("start_time")
+        else: 
+            start_time = start if start else now 
+            user_alerts.set({"start_time": start_time})
+        
+        if now - start_time > 6 * 3600: # Skips old alerts 
+            user_alerts.delete()
+            continue 
 
         alerts.append({
             "title": title,
             "description": description,
             "cause": str(cause),
-            "start_time": seen_alerts[title]  
+            "start_time": start_time
         })
 
     return jsonify(alerts)
