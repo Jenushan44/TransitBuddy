@@ -37,13 +37,13 @@ def subway_alerts():
     feed = FeedMessage()
     feed.ParseFromString(response.content)
 
+    now = int(time.time())
+
     for title in list(seen_alerts.keys()):
         # If alert is older then 24 hours, then removed
         if now - seen_alerts[title] > 24 * 3600:
             del seen_alerts[title]
 
-
-    now = int(time.time())
     alerts = []
 
     for entity in feed.entity:
@@ -156,7 +156,7 @@ def send_alerts():
         if matching_alerts and email:
             email_body = "Hi,\n\nHere are your current TTC alerts:\n\n"
             for route, title, description in matching_alerts:
-                email_body += f"Route: {route}\n- {title}\n- {description}\n\n"
+                email_body += f"Route: {route}\n- {description}\n\n"
             email_body += "Stay safe,\nThe TransitBuddy Team"
 
             send_email(email, "Your TransitBuddy Alerts", email_body)
